@@ -1,8 +1,12 @@
+from pathlib import Path
 import os
 import json
+import uuid
 
 db = []
-FILE_PATH = "Eve/tasks.json"
+
+BASE_DIR = Path(__file__).resolve().parent
+FILE_PATH = BASE_DIR/"tasks.json"
 
 def add_task(task):
     data = read_data()
@@ -22,6 +26,9 @@ def write_data(data):
     with open(FILE_PATH, "w") as file:
         json.dump(data, file, indent=4)
 
+def generate_id():
+    return str(uuid.uuid4())
+
 while True:
     print("1) Add task")
     print("2) view tasks")
@@ -35,7 +42,7 @@ while True:
         task_name = input("enter task name: ")
         description = input("enter task description: ")
 
-        task = {"task_name": task_name, "description": description}
+        task = {"ID": generate_id(), "task_name": task_name, "description": description}
 
         add_task(task)
         print("\n******************")
@@ -56,7 +63,7 @@ while True:
 
     elif choice == "3":
         data = read_data()
-        task_name = input("Enter task number: ")
+        task_name = input("Enter task name: ")
 
         for i in data:
             if i["task_name"] == task_name:
