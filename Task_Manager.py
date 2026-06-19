@@ -1,84 +1,128 @@
 from pathlib import Path
+from tabulate import tabulate
 import os
 import json
 import uuid
 
-db = []
 
 BASE_DIR = Path(__file__).resolve().parent
 FILE_PATH = BASE_DIR/"tasks.json"
 
-def add_task(task):
-    data = read_data()
-
-    data.append(task)
-    db.append(task)
-
-    write_data(data)
-
-def read_data():
-    if not os.path.exists(FILE_PATH):
-        return []
-    with open(FILE_PATH, "r") as file:
-        return json.load(file)
-    
-def write_data(data):
-    with open(FILE_PATH, "w") as file:
-        json.dump(data, file, indent=4)
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def generate_id():
     return str(uuid.uuid4())
 
+class Database:
+    def read_data():
+        if not os.path.exists(FILE_PATH):
+            return []
+        with open(FILE_PATH, "r") as file:
+            return json.load(file)
+        
+    def write_data(data):
+        with open(FILE_PATH, "w") as file:
+            json.dump(data, file, indent=4)
+
+class DataOperations:
+
+    def add_task():
+        task_name = input("Enter the name of your task: ")
+        Description = input("Enter its description: ")
+
+        task = {"task name": task_name, "Description": Description}
+
+        data = Database.read_data()
+
+        if data != []:
+
+            for i in data:
+                if task["task name"] == i["task name"]:
+                    print("   !! task name already exists !!   ")
+                    return
+                
+            data.append(task)
+
+        else:
+            data.append(task)
+
+        Database.write_data(data)
+        clear()
+        print("   ++ Added Successfully ++   ")
+    
+    def view_tasks():
+        clear()
+
+        table = []
+
+        dataset = Database.read_data()
+        for i, task in enumerate(dataset, start=1):
+            table.append([
+                i,
+                task["task name"],
+                task["Description"]
+            ])
+        print("\nTable Set\n")
+        print(tabulate(table, headers=["ID", "NAME", "DESCRIPTION"], tablefmt="grid"))
+
+    def update_tasks():
+        pass
+
+    def delete_tasks(task_name):
+        dataset = Database.read_data()
+        
+        dataset = [task for task in dataset if task.get("task name ") != task_name]
+        
+        Database.write_data(dataset)
+
+
+print("""====================================
+        ANIME TRACKER CLI """)
+
 while True:
-    print("1) Add task")
-    print("2) view tasks")
-    print("3) delete tasks")
-    print("3) update tasks")
-    print("5) exit")
+    print("""
+====================================
+1. Add Anime
+2. View Anime List
+3. Update Anime
+4. Delete Anime
+5. Exit
+====================================
+""")
 
     choice = input("Enter command or the number corresponding to the task: ")
 
     if choice == "1":
-        task_name = input("enter task name: ")
-        description = input("enter task description: ")
-
-        task = {"ID": generate_id(), "task_name": task_name, "description": description}
-
-        add_task(task)
-        print("\n******************")
-        print("Successful")
-        print("******************\n")
+        
+        DataOperations.add_task()
     
     elif choice == "2":
-        print("\n******************")
-        data = read_data()
-        if data:
-            for i in data:
-                print(i)
-                print("******************\n")
-                
-        else:
-            print("empty")
-            print("******************\n")
+
+        DataOperations.view_tasks()
+    
 
     elif choice == "3":
-        data = read_data()
-        task_name = input("Enter task name: ")
+        task_name = input("Enter the name of your task: ")
 
-        for i in data:
-            if i["task_name"] == task_name:
-                removable = i
-                data.remove(removable)
-                write_data(data)
+        DataOperations.delete_tasks(task_name)
 
     elif choice == "4":
-        task_name = input("Enter task number: ")
+        task_name = input("Enter the name of your task: ")
+        change_item = input("What item would you like to change from it: ")
+        change_value = input("What would you like to change from it: ")
 
-        
+        dataset = Database.read_data()
 
+        for i in dataset:
+            if i["task name"] == task_name:
+                i[change_item] = change_value
+
+        Database.write_data(dataset)
             
     elif choice == "clear":
-        os.system('cls' if os.name == 'nt' else 'clear')
+        clear()
 
     elif choice == "5":
         break
+
