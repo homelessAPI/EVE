@@ -67,7 +67,17 @@ class DataOperations:
         print(tabulate(table, headers=["ID", "NAME", "DESCRIPTION"], tablefmt="grid"))
 
     def update_tasks():
-        pass
+        task_name = input("Enter the name of your task: ")
+        change_item = input("What item would you like to change from it: ")
+        change_value = input("What would you like to change from it: ")
+
+        dataset = Database.read_data()
+
+        for i in dataset:
+            if i["task name"] == task_name:
+                i[change_item] = change_value
+
+        Database.write_data(dataset)
 
     def delete_tasks(task_name):
         dataset = Database.read_data()
@@ -85,8 +95,8 @@ while True:
 ====================================
 1. Add Anime
 2. View Anime List
-3. Update Anime
-4. Delete Anime
+3. Delete Anime
+4. Update Anime
 5. Exit
 ====================================
 """)
@@ -108,18 +118,9 @@ while True:
         DataOperations.delete_tasks(task_name)
 
     elif choice == "4":
-        task_name = input("Enter the name of your task: ")
-        change_item = input("What item would you like to change from it: ")
-        change_value = input("What would you like to change from it: ")
 
-        dataset = Database.read_data()
+        DataOperations.update_tasks()
 
-        for i in dataset:
-            if i["task name"] == task_name:
-                i[change_item] = change_value
-
-        Database.write_data(dataset)
-            
     elif choice == "clear":
         clear()
 
