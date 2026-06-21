@@ -78,13 +78,19 @@ class DataOperations:
                 i[change_item] = change_value
 
         Database.write_data(dataset)
+        clear()
+        print("   ++ Updated Successfully ++   ")
 
-    def delete_tasks(task_name):
+    def delete_tasks():
+        task_name = input("Enter the name of your task: ")
+
         dataset = Database.read_data()
         
-        dataset = [task for task in dataset if task.get("task name ") != task_name]
+        dataset = [task for task in dataset if task.get("task name") != task_name]
         
         Database.write_data(dataset)
+        clear()
+        print("   ++ deleted Successfully ++   ")
 
 
 print("""====================================
@@ -93,37 +99,35 @@ print("""====================================
 while True:
     print("""
 ====================================
-1. Add Anime
-2. View Anime List
-3. Delete Anime
-4. Update Anime
+1. Add task
+2. View task List
+3. Delete task
+4. Update task
 5. Exit
 ====================================
 """)
 
     choice = input("Enter command or the number corresponding to the task: ")
 
-    if choice == "1":
+    if choice == "1" or choice == "add":
         
         DataOperations.add_task()
     
-    elif choice == "2":
+    elif choice == "2" or choice == "view":
 
         DataOperations.view_tasks()
     
 
-    elif choice == "3":
-        task_name = input("Enter the name of your task: ")
+    elif choice == "3" or choice == "delete":
+        DataOperations.delete_tasks()
 
-        DataOperations.delete_tasks(task_name)
-
-    elif choice == "4":
+    elif choice == "4" or choice == "update":
 
         DataOperations.update_tasks()
 
     elif choice == "clear":
         clear()
 
-    elif choice == "5":
+    elif choice == "5" or choice == "quit":
         break
 
