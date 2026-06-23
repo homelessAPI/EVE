@@ -31,7 +31,7 @@ class DataOperations:
         task_name = input("Enter the name of your task: ")
         Description = input("Enter its description: ")
 
-        task = {"task name": task_name, "Description": Description}
+        task = {"task name": task_name, "Description": Description, "Status": "Incomplete"}
 
         data = Database.read_data()
 
@@ -61,10 +61,11 @@ class DataOperations:
             table.append([
                 i,
                 task["task name"],
-                task["Description"]
+                task["Description"],
+                task["Status"]
             ])
         print("\nTable Set\n")
-        print(tabulate(table, headers=["ID", "NAME", "DESCRIPTION"], tablefmt="grid"))
+        print(tabulate(table, headers=["ID", "NAME", "DESCRIPTION", "STATUS"], tablefmt="grid"))
 
     def update_tasks():
         task_name = input("Enter the name of your task: ")
@@ -81,17 +82,21 @@ class DataOperations:
         clear()
         print("   ++ Updated Successfully ++   ")
 
-    def delete_tasks():
-        task_name = input("Enter the name of your task: ")
-
+    def delete_tasks(SubCommand):
         dataset = Database.read_data()
-        
-        dataset = [task for task in dataset if task.get("task name") != task_name]
-        
-        Database.write_data(dataset)
-        clear()
-        print("   ++ deleted Successfully ++   ")
 
+        if SubCommand == "one task":
+            task_name = input("Enter the name of your task: ")
+            
+            dataset = [task for task in dataset if task.get("task name") != task_name]
+            
+            Database.write_data(dataset)
+            clear()
+            print("   ++ deleted Successfully ++   ")
+        elif SubCommand == "all":
+            dataset.clear()
+
+            Database.write_data(dataset)
 
 print("""====================================
         ANIME TRACKER CLI """)
@@ -118,8 +123,13 @@ while True:
         DataOperations.view_tasks()
     
 
-    elif choice == "3" or choice == "delete":
-        DataOperations.delete_tasks()
+    elif choice == "3" or choice.startswith("delete"):
+
+        if choice == "3" or choice == "delete":
+            DataOperations.delete_tasks("one task")
+
+        elif choice == "delete -all":
+            DataOperations.delete_tasks("all")
 
     elif choice == "4" or choice == "update":
 

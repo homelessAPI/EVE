@@ -1,10 +1,7 @@
 [
     {
-        "task name": "pineapple",
-        "Description": "pen"
-    },
-    {
         "task name": "apple",
-        "Description": "thll"
+        "Description": "pineapple",
+        "Status": "Incomplete"
     }
 ]
